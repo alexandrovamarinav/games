@@ -21,16 +21,15 @@ const how={
  stars:{title:'Syllable Stars',copy:'<ul><li>Read the target at the top: <b>OPEN</b> or <b>CLOSED</b>.</li><li>Collect exactly three matching word stars.</li><li>A wrong star stays in the sky, so you can try again.</li><li>The syllables become less familiar as you progress.</li></ul>'}
 };
 const modal=document.querySelector('#game-modal'),board=document.querySelector('#game-board'),feedback=document.querySelector('#feedback'),onboarding=document.querySelector('#onboarding'),rules=document.querySelector('#rules');
-let active='',index=0,roundScore=0,total=Number(localStorage.getItem('wizard-score')||1250),locked=false,selectedAvatar='';
+let active='',index=0,roundScore=0,total=0,locked=false,selectedAvatar='',currentProfile=null;
 document.querySelector('#score').textContent=total;
 
 // Student profile and first visit
-const savedProfile=JSON.parse(localStorage.getItem('wizard-profile')||'null');
-if(savedProfile)applyProfile(savedProfile);else onboarding.classList.add('open');
+onboarding.classList.add('open');
 document.querySelectorAll('.avatar-grid button').forEach(button=>button.onclick=()=>{document.querySelectorAll('.avatar-grid button').forEach(b=>b.classList.remove('selected'));button.classList.add('selected');selectedAvatar=button.dataset.avatar;validateProfile()});
 document.querySelector('#student-name').addEventListener('input',validateProfile);
-document.querySelector('#enter-academy').onclick=()=>{const name=document.querySelector('#student-name').value.trim();const profile={name,avatar:selectedAvatar};localStorage.setItem('wizard-profile',JSON.stringify(profile));applyProfile(profile);onboarding.classList.remove('open');startMusic();playSound(true)};
-document.querySelector('#profile-button').onclick=()=>{const p=JSON.parse(localStorage.getItem('wizard-profile')||'null');document.querySelector('#student-name').value=p?.name||'';selectedAvatar=normalizeAvatar(p?.avatar)||'';document.querySelectorAll('.avatar-grid button').forEach(b=>b.classList.toggle('selected',b.dataset.avatar===selectedAvatar));validateProfile();onboarding.classList.add('open')};
+document.querySelector('#enter-academy').onclick=()=>{const name=document.querySelector('#student-name').value.trim();currentProfile={name,avatar:selectedAvatar};total=0;roundScore=0;document.querySelector('#score').textContent='0';document.querySelector('#round-score').textContent='0';applyProfile(currentProfile);onboarding.classList.remove('open');startMusic();playSound(true)};
+document.querySelector('#profile-button').onclick=()=>{const p=currentProfile;document.querySelector('#student-name').value=p?.name||'';selectedAvatar=normalizeAvatar(p?.avatar)||'';document.querySelectorAll('.avatar-grid button').forEach(b=>b.classList.toggle('selected',b.dataset.avatar===selectedAvatar));validateProfile();onboarding.classList.add('open')};
 function validateProfile(){document.querySelector('#enter-academy').disabled=!(document.querySelector('#student-name').value.trim()&&selectedAvatar)}
 function normalizeAvatar(value){return({"avatar-boy.png":'boy',"avatar-girl.png":'girl',"avatar-reader.png":'reader',"avatar-owl.png":'owl'})[value]||value}
 function applyProfile(p){const avatar=normalizeAvatar(p.avatar)||'boy';document.querySelector('#profile-name').textContent=p.name;document.querySelector('#profile-avatar').className=`profile-picture avatar-${avatar}`}
@@ -45,7 +44,7 @@ function openGame(id){active=id;const panel=document.querySelector('.panel');pan
 function closeGame(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true')}
 function start(){index=0;roundScore=0;locked=false;document.querySelector('#round-score').textContent=0;feedback.textContent='';feedback.className='feedback';render()}
 function updateProgress(){document.querySelector('#question-number').textContent=Math.min(index+1,20);document.querySelector('#progress-fill').style.width=((index+1)/20*100)+'%'}
-function reward(){roundScore+=10;total+=10;document.querySelector('#round-score').textContent=roundScore;document.querySelector('#score').textContent=total;localStorage.setItem('wizard-score',total);const t=document.querySelector('#toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),850)}
+function reward(){roundScore+=10;total+=10;document.querySelector('#round-score').textContent=roundScore;document.querySelector('#score').textContent=total;const t=document.querySelector('#toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),850)}
 function playSound(correct){const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)return;const ctx=playSound.ctx||(playSound.ctx=new AudioCtx());const notes=correct?[523.25,659.25,783.99]:[220,164.81];notes.forEach((freq,i)=>{const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=correct?'sine':'sawtooth';osc.frequency.value=freq;gain.gain.setValueAtTime(.001,ctx.currentTime+i*.1);gain.gain.exponentialRampToValueAtTime(correct?.12:.08,ctx.currentTime+i*.1+.015);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.1+.18);osc.connect(gain).connect(ctx.destination);osc.start(ctx.currentTime+i*.1);osc.stop(ctx.currentTime+i*.1+.2)})}
 
 // Procedural mysterious background music: no external audio file or autoplay permission needed.
