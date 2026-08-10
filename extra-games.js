@@ -34,6 +34,6 @@ function renderDragon(){
     if(!selected){playSound(false);tip.textContent='Choose an egg first!';return}
     if(nest.dataset.type!==selected.dataset.type){playSound(false);feedback.textContent=`“${selected.textContent}” belongs in the other nest.`;feedback.className='feedback bad';selected.animate([{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)'}],{duration:280});return}
     playSound(true);reward();selected.classList.remove('selected');selected.classList.add('hatched');hatched++;feedback.textContent='The egg is safe — a baby dragon hatched! ✦';feedback.className='feedback good';selected=null;tip.textContent=hatched<3?'Choose the next egg.':'All three dragons are safe!';
-    if(hatched===3){locked=true;setTimeout(()=>{index++;locked=false;feedback.textContent='';renderDragon()},900)}
+    if(hatched===3){locked=true;setTimeout(()=>{index++;locked=false;feedback.textContent='';renderDragon()},1800)}
   });
 }

@@ -1,31 +1,26 @@
-const vowelRounds=[
- ['cap','cape','a'],['kit','kite','i'],['hop','hope','o'],['cub','cube','u'],['pet','pete','e'],
- ['mad','made','a'],['rid','ride','i'],['not','note','o'],['cut','cute','u'],['them','theme','e'],
- ['plan','plane','a'],['strip','stripe','i'],['glob','globe','o'],['tub','tube','u'],['met','mete','e'],
- ['scrap','scrape','a'],['spin','spine','i'],['slop','slope','o'],['us','use','u'],['breath','breathe','e']
-].map(([base,magic,vowel],i)=>({base,magic,vowel,hint:i<5?'Choose the vowel that changes from short to long.':i<10?'Listen carefully: which vowel says its name?':'Use the word pattern and find the long vowel.'}));
-const runRounds=[
- ['cat','Closed','The syllable ends in a consonant. A is short.'],['he','Open','It ends in a vowel. E says its name.'],['kit','Closed','It ends in a consonant. I is short.'],['go','Open','It ends in a vowel. O says its name.'],['sun','Closed','It ends in a consonant. U is short.'],
- ['me','Open','It ends in a vowel. E says its name.'],['robot','Open','The first syllable “ro” ends in a vowel.','ro'],['music','Open','The first syllable “mu” ends in a vowel.','mu'],['rabbit','Closed','The first syllable “rab” ends in a consonant.','rab'],['lemon','Closed','The first syllable “lem” ends in a consonant.','lem'],
- ['tulip','Open','The first syllable “tu” is open.','tu'],['hotel','Open','The first syllable “ho” is open.','ho'],['picnic','Closed','The first syllable “pic” is closed.','pic'],['basic','Open','The first syllable “ba” is open.','ba'],['finish','Closed','The first syllable “fin” is closed.','fin'],
- ['moment','Open','The first syllable “mo” is open.','mo'],['rapid','Closed','The first syllable “rap” is closed.','rap'],['unit','Open','The first syllable “u” is open.','u'],['planet','Closed','The first syllable “plan” is closed.','plan'],['student','Open','The first syllable “stu” is open.','stu']
-].map(([word,type,note,marked])=>({word,type,note,marked}));
-const openPool=['a','be','he','me','she','we','go','no','so','hi','mu','ro','tu','ba','flu','pro','tri','stu','ze','lo'];
-const closedPool=['cat','bed','sit','top','sun','nap','red','fin','hop','cup','rab','lem','pic','plan','run','dog','met','kit','glob','cut'];
-const starRounds=Array.from({length:20},(_,i)=>{const target=i%2?'Open':'Closed',right=target==='Open'?openPool:closedPool,wrong=target==='Open'?closedPool:openPool;const words=[];for(let j=0;j<3;j++){words.push([right[(i*2+j)%20],target]);words.push([wrong[(i*3+j)%20],target==='Open'?'Closed':'Open'])}return{target,words:words.sort((a,b)=>a[0].localeCompare(b[0]))}});
-const potionRounds=[
- ['c_t','cat','a','Closed'],['m_','me','e','Open'],['s_t','sit','i','Closed'],['g_','go','o','Open'],['s_n','sun','u','Closed'],
- ['h_','he','e','Open'],['n_p','nap','a','Closed'],['h_','hi','i','Open'],['h_p','hop','o','Closed'],['fl_','flu','u','Open'],
- ['r_ · bot','robot','o','Open'],['r_b · bit','rabbit','a','Closed'],['m_ · sic','music','u','Open'],['l_m · on','lemon','e','Closed'],['t_ · lip','tulip','u','Open'],
- ['p_c · nic','picnic','i','Closed'],['b_ · sic','basic','a','Open'],['f_n · ish','finish','i','Closed'],['m_ · ment','moment','o','Open'],['pl_n · et','planet','a','Closed']
-].map(([pattern,word,vowel,type])=>({pattern,word,vowel,type}));
-const dragonWords=[['me','Open'],['cat','Closed'],['go','Open'],['bed','Closed'],['hi','Open'],['sit','Closed'],['flu','Open'],['top','Closed'],['she','Open'],['sun','Closed'],['ro','Open'],['nap','Closed'],['mu','Open'],['red','Closed'],['tu','Open'],['fin','Closed'],['ba','Open'],['hop','Closed'],['pro','Open'],['cup','Closed'],['stu','Open'],['rab','Closed'],['no','Open'],['lem','Closed'],['we','Open'],['pic','Closed'],['so','Open'],['plan','Closed'],['a','Open'],['run','Closed'],['ze','Open'],['dog','Closed'],['tri','Open'],['met','Closed'],['lo','Open'],['kit','Closed'],['he','Open'],['glob','Closed'],['be','Open'],['cut','Closed']];
-const dragonRounds=Array.from({length:20},(_,i)=>[dragonWords[(i*2)%40],dragonWords[(i*2+1)%40],dragonWords[(i*2+7)%40]]);
+const closedA=['cat','ant','yak','ax','ram','jam','yam','dam','fan','man','pan','can','dad','pad','bag','rag','cap','map','nap','tap','bat','rat','hat','mat'];
+const closedE=['web','egg','vet','ten','jet','net','wet','pet','hen','pen','red','bed'];
+const closedI=['hip','ink','zip','in','lip','tip','sip','rip','bib','rib','kid','lid','pin','fin','bin','win','fig','wig','big','dig','pit','hit','six','mix'];
+const closedO=['fox','log','ox','rod','pot','hot','cot','dot','top','mop','hop','pop'];
+const closedU=['sun','up','jug','hug','bug','rug','mug','bud','mud','pup','cup','nut','hut','cut','cub','tub','gum','hum','bun','run','fun'];
+const magicA=['tape','cape','cane','mane','game','cake','name','lake','gate','wave','skate','cave'];
+const magicI=['kite','pine','ripe','fine','lime','bike','time','hike','five','nine','dive','line'];
+const magicOU=['home','bone','cone','rope','cube','mute','cute','mule','tube','june','tune','rule'];
+const openE=['she','we','me','he','be'];
+const closedPool=[...closedA,...closedE,...closedI,...closedO,...closedU];
+const openPool=openE;
+const vowelRounds=[['cap','cape','a'],['tap','tape','a'],['can','cane','a'],['man','mane','a'],['dad','game','a'],['pin','pine','i'],['rip','ripe','i'],['fin','fine','i'],['hip','hike','i'],['lid','line','i'],['fox','home','o'],['rod','rope','o'],['hop','bone','o'],['cot','cone','o'],['cub','cube','u'],['cut','cute','u'],['tub','tube','u'],['gum','mute','u'],['pet','pete','e'],['bed','be','e']].map(([base,magic,vowel],i)=>({base,magic,vowel,hint:i<5?'Find the vowel in the short-a and magic-e words.':i<10?'Find the vowel that changes to a long sound.':'Compare both words and choose their vowel.'}));
+const runWords=[['cat','Closed'],['she','Open'],['web','Closed'],['we','Open'],['hip','Closed'],['me','Open'],['fox','Closed'],['he','Open'],['sun','Closed'],['be','Open'],['ant','Closed'],['pet','Closed'],['ink','Closed'],['hop','Closed'],['cup','Closed'],['dad','Closed'],['red','Closed'],['fin','Closed'],['top','Closed'],['run','Closed']];
+const runRounds=runWords.map(([word,type])=>({word,type,note:type==='Open'?`“${word}” ends in a vowel, so it is open.`:`“${word}” ends in a consonant, so it is closed.`}));
+const starRounds=Array.from({length:20},(_,i)=>{const target=i%2?'Open':'Closed',right=target==='Open'?openPool:closedPool,wrong=target==='Open'?closedPool:openPool;const words=[];for(let j=0;j<3;j++){words.push([right[(i*3+j)%right.length],target]);words.push([wrong[(i*5+j)%wrong.length],target==='Open'?'Closed':'Open'])}return{target,words}});
+const potionSource=[...closedA.slice(0,3),...closedE.slice(0,3),...closedI.slice(0,3),...closedO.slice(0,3),...closedU.slice(0,3),...openE];
+const potionRounds=potionSource.map(word=>{const vowel=[...word].find(char=>'aeiou'.includes(char));return{pattern:word.replace(vowel,'_'),word,vowel,type:openE.includes(word)?'Open':'Closed'}});
+const dragonRounds=Array.from({length:20},(_,i)=>[[openE[i%openE.length],'Open'],[closedPool[(i*2)%closedPool.length],'Closed'],[closedPool[(i*2+1)%closedPool.length],'Closed']]);
 const rounds={vowels:vowelRounds,run:runRounds,stars:starRounds,potion:potionRounds,dragon:dragonRounds};
 const meta={vowels:['Magic Vowel Match','Choose the vowel that changes from short to long.'],run:['Castle Reading Run','Is the highlighted syllable open or closed?'],stars:['Syllable Stars','Collect only the stars with the requested syllable type!'],potion:['Potion Syllable Lab','Complete the word, then identify its syllable type.'],dragon:['Dragon Egg Rescue','Choose an egg and send it to the correct nest!']};
 const how={
  vowels:{title:'Magic Vowel Match',copy:'<ul><li>Read the first <b>closed-syllable</b> word.</li><li>Compare it with the magic-e word.</li><li>Choose the vowel whose sound changes from short to long.</li><li>Later rounds use longer consonant blends.</li></ul>'},
- run:{title:'Castle Reading Run',copy:'<ul><li>An <b>open syllable</b> ends in a vowel; the vowel usually says its name.</li><li>A <b>closed syllable</b> ends in a consonant; the vowel is usually short.</li><li>For longer words, classify only the separated first syllable.</li></ul>'},
+ run:{title:'Castle Reading Run',copy:'<ul><li>Read the word on the castle path.</li><li>An <b>open syllable</b> ends in a vowel; the vowel usually says its name.</li><li>A <b>closed syllable</b> ends in a consonant; the vowel is usually short.</li><li>Choose the correct type to continue the run.</li></ul>'},
  stars:{title:'Syllable Stars',copy:'<ul><li>Read the target at the top: <b>OPEN</b> or <b>CLOSED</b>.</li><li>Collect exactly three matching word stars.</li><li>A wrong star stays in the sky, so you can try again.</li><li>The syllables become less familiar as you progress.</li></ul>'},
  potion:{title:'Potion Syllable Lab',copy:'<ul><li>Choose the missing vowel to complete the word.</li><li>Then decide whether the shown syllable is <b>open</b> or <b>closed</b>.</li><li>Open syllables end in a vowel; closed syllables end in a consonant.</li><li>Complete both steps to brew the potion.</li></ul>'},
  dragon:{title:'Dragon Egg Rescue',copy:'<ul><li>Select one glowing egg and read its syllable.</li><li>Send it to the <b>OPEN</b> or <b>CLOSED</b> nest.</li><li>A correct egg hatches and earns stars.</li><li>Sort all three eggs to complete each rescue.</li></ul>'}
