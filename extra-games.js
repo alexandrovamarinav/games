@@ -4,21 +4,31 @@ function renderPotion(){
   const q=rounds.potion[index];
   if(potionPhase==='vowel'){
     document.querySelector('#game-instruction').textContent='Choose the missing vowel for the potion word.';
-    board.innerHTML=`<div class="potion-board"><p class="potion-step">STEP 1 · ADD THE VOWEL</p><div class="potion-word">${q.pattern}</div><div class="potion-options">${['a','e','i','o','u'].map(v=>`<button class="potion-vial" data-v="${v}">${v}</button>`).join('')}</div></div>`;
+    board.innerHTML=potionStage(q,`<p class="potion-step">STEP 1 · CHOOSE AN INGREDIENT</p><div class="potion-word">${q.pattern}</div><div class="potion-options">${['a','e','i','o','u'].map((v,i)=>`<button class="potion-vial vial-${i}" data-v="${v}"><i></i><b>${v}</b></button>`).join('')}</div>`);
     board.querySelectorAll('.potion-vial').forEach(button=>button.onclick=()=>{
       if(locked)return;
       if(button.dataset.v!==q.vowel){playSound(false);feedback.textContent='That ingredient does not complete the word. Try again!';feedback.className='feedback bad';button.animate([{transform:'rotate(-7deg)'},{transform:'rotate(7deg)'},{transform:'rotate(0)'}],{duration:280});return}
-      locked=true;playSound(true);reward();button.classList.add('correct');feedback.textContent=`Perfect! The word is “${q.word}”.`;feedback.className='feedback good';potionPhase='type';setTimeout(()=>{locked=false;feedback.textContent='';renderPotion()},700)
+      locked=true;playSound(true);reward();button.classList.add('correct');addPotionIngredient(button.dataset.v);feedback.textContent=`Perfect! The word is “${q.word}”.`;feedback.className='feedback good';potionPhase='type';setTimeout(()=>{locked=false;feedback.textContent='';renderPotion()},1050)
     });
     return;
   }
   document.querySelector('#game-instruction').textContent='Now identify the syllable type.';
-  board.innerHTML=`<div class="potion-board"><p class="potion-step">STEP 2 · NAME THE SYLLABLE</p><div class="potion-word">${q.word}</div><div class="potion-types"><button class="answer" data-type="Open">open syllable</button><button class="answer" data-type="Closed">closed syllable</button></div></div>`;
+  board.innerHTML=potionStage(q,`<p class="potion-step">STEP 2 · NAME THE SYLLABLE</p><div class="potion-word">${q.word}</div><div class="potion-types"><button class="answer" data-type="Open">open syllable</button><button class="answer" data-type="Closed">closed syllable</button></div>`);
   board.querySelectorAll('.answer').forEach(button=>button.onclick=()=>{
     if(locked)return;
     if(button.dataset.type!==q.type){playSound(false);feedback.textContent=`Look at the final letter in “${q.word}”. Try again!`;feedback.className='feedback bad';button.classList.add('wrong');setTimeout(()=>button.classList.remove('wrong'),450);return}
-    locked=true;playSound(true);reward();button.classList.add('correct');feedback.textContent=`Correct — “${q.word}” has a ${q.type.toLowerCase()} syllable!`;feedback.className='feedback good';setTimeout(()=>{index++;potionPhase='vowel';locked=false;feedback.textContent='';renderPotion()},850)
+    locked=true;playSound(true);reward();button.classList.add('correct');addPotionIngredient(q.type==='Open'?'e':'a');feedback.textContent=`Correct — “${q.word}” has a ${q.type.toLowerCase()} syllable!`;feedback.className='feedback good';setTimeout(()=>{index++;potionPhase='vowel';locked=false;feedback.textContent='';renderPotion()},1150)
   });
+}
+
+function potionStage(q,controls){
+  const liquidTop=74-(potionLevel*.28);
+  return `<div class="potion-board"><div class="brew-lab"><div class="cauldron-wrap" style="--potion-hue:${potionHue}deg;--liquid-top:${liquidTop}px;--liquid-top-mobile:${41-potionLevel*.155}px;--fill-opacity:${.22+potionLevel*.007}"><div class="potion-liquid"><i></i><i></i><i></i></div><img class="cauldron-img" src="assets/potion-cauldron-3d.png" alt="Magic cauldron filling with potion"><img class="ingredient-drop" src="assets/potion-ingredient-3d.png" alt=""><div class="brew-level"><i style="height:${potionLevel}%"></i></div></div><div class="brew-task">${controls}<small class="brew-count">Potion power: <b>${Math.round(potionLevel)}%</b></small></div></div></div>`
+}
+
+function addPotionIngredient(vowel){
+  potionLevel=Math.min(100,potionLevel+2.5);potionHue=({a:330,e:42,i:205,o:275,u:155})[vowel]??potionHue;
+  const wrap=board.querySelector('.cauldron-wrap');if(!wrap)return;wrap.style.setProperty('--potion-hue',potionHue+'deg');wrap.style.setProperty('--liquid-top',(74-potionLevel*.28)+'px');wrap.style.setProperty('--liquid-top-mobile',(41-potionLevel*.155)+'px');wrap.style.setProperty('--fill-opacity',.22+potionLevel*.007);wrap.querySelector('.brew-level i').style.height=potionLevel+'%';wrap.classList.remove('adding');void wrap.offsetWidth;wrap.classList.add('adding')
 }
 
 function renderDragon(){
