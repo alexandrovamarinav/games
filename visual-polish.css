@@ -64,10 +64,11 @@
 .panel.game-potion .panel-head small{left:31px;right:auto;top:128px}
 .brew-task{min-width:0}
 .brew-task .potion-step{position:relative;z-index:3;display:block;min-height:20px;margin:0 0 4px;padding:3px 8px;color:#ffe699;background:#0a0c31bd;border-radius:12px}
-.brew-task .potion-word{width:min(420px,100%);min-height:154px;padding:30px 77px 26px;font-size:42px;letter-spacing:3px;white-space:nowrap}
+.brew-task .potion-word{width:min(500px,100%);min-height:150px;padding:28px 86px 25px;background-size:100% 100%;font-size:40px;letter-spacing:3px;white-space:nowrap}
 
 .potion-vial{background:none;filter:drop-shadow(0 8px 7px #0104188f)}
 .potion-vial.vial-0,.potion-vial.vial-1,.potion-vial.vial-2,.potion-vial.vial-3,.potion-vial.vial-4{filter:drop-shadow(0 8px 7px #0104188f)}
+.potion-vial:nth-child(2n),.potion-vial:focus{outline:none;box-shadow:none}
 .potion-vial::before{content:"";display:block;position:absolute;z-index:1;inset:0;background:transparent url("assets/potion-vial-3d.png") center/contain no-repeat;filter:hue-rotate(var(--vial-hue));pointer-events:none}
 .potion-vial b{z-index:2;color:#321247;text-shadow:-1px -1px 0 #fff3b5,1px -1px 0 #fff3b5,-1px 1px 0 #fff3b5,1px 1px 0 #fff3b5,0 2px 3px #5a2a00,0 0 7px #fff}
 .potion-vial:hover:not(:disabled){filter:drop-shadow(0 10px 12px #ffd344a8)}
@@ -77,4 +78,4 @@
 .potion-vial.wrong{filter:drop-shadow(0 0 10px #ff416c)}
 .potion-vial.wrong::before{filter:hue-rotate(var(--vial-hue)) saturate(.6)}
 
-@media(max-width:900px){.word-star .star-word{inset:31% 18% 29%;font-size:21px}.panel.game-potion .panel-head small{left:14px;right:auto;top:155px}.brew-task .potion-word{width:min(330px,100%);min-height:124px;padding:24px 58px 21px;font-size:31px;letter-spacing:2px}.brew-task .potion-step{font-size:11px}}
+@media(max-width:900px){.word-star .star-word{inset:31% 18% 29%;font-size:21px}.panel.game-potion .panel-head small{left:14px;right:auto;top:155px}.brew-task .potion-word{width:min(360px,100%);min-height:118px;padding:22px 62px 19px;background-size:100% 100%;font-size:30px;letter-spacing:2px}.brew-task .potion-step{font-size:11px}}
