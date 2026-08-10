@@ -52,3 +52,29 @@
 .potion-vial.wrong{filter:hue-rotate(var(--vial-hue)) saturate(.6) drop-shadow(0 0 10px #ff416c)}
 @keyframes vialSuccess{45%{transform:translateY(-14px) scale(1.15) rotate(5deg)}100%{transform:translateY(0) scale(1)}}
 @media(max-width:900px){.brew-task .potion-word{width:min(260px,96%);min-height:110px;padding:22px 48px 19px;font-size:32px;letter-spacing:3px}.potion-options{gap:2px}.potion-vial{width:58px;height:76px}.potion-vial b{top:60%;font-size:22px}}
+
+/* Layout fixes: every label is anchored to its own star; potion controls never overlap */
+.word-star{position:relative;background-image:none!important}
+.word-star>img{position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.word-star:nth-child(2n)>img{filter:hue-rotate(205deg)}
+.word-star:nth-child(3n)>img{filter:hue-rotate(275deg)}
+.word-star:nth-child(2n),.word-star:nth-child(3n){filter:drop-shadow(0 8px 5px #020316aa) drop-shadow(0 0 13px #a982ff)}
+.word-star .star-word{position:absolute;z-index:2;inset:31% 20% 29%;width:auto;height:auto;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;color:#fff;font-size:clamp(22px,3.2vw,31px);line-height:1;text-align:center}
+
+.panel.game-potion .panel-head small{left:31px;right:auto;top:128px}
+.brew-task{min-width:0}
+.brew-task .potion-step{position:relative;z-index:3;display:block;min-height:20px;margin:0 0 4px;padding:3px 8px;color:#ffe699;background:#0a0c31bd;border-radius:12px}
+.brew-task .potion-word{width:min(420px,100%);min-height:154px;padding:30px 77px 26px;font-size:42px;letter-spacing:3px;white-space:nowrap}
+
+.potion-vial{background:none;filter:drop-shadow(0 8px 7px #0104188f)}
+.potion-vial.vial-0,.potion-vial.vial-1,.potion-vial.vial-2,.potion-vial.vial-3,.potion-vial.vial-4{filter:drop-shadow(0 8px 7px #0104188f)}
+.potion-vial::before{content:"";display:block;position:absolute;z-index:1;inset:0;background:transparent url("assets/potion-vial-3d.png") center/contain no-repeat;filter:hue-rotate(var(--vial-hue));pointer-events:none}
+.potion-vial b{z-index:2;color:#321247;text-shadow:-1px -1px 0 #fff3b5,1px -1px 0 #fff3b5,-1px 1px 0 #fff3b5,1px 1px 0 #fff3b5,0 2px 3px #5a2a00,0 0 7px #fff}
+.potion-vial:hover:not(:disabled){filter:drop-shadow(0 10px 12px #ffd344a8)}
+.potion-vial:hover:not(:disabled)::before{filter:hue-rotate(var(--vial-hue)) brightness(1.15)}
+.potion-vial.correct{filter:drop-shadow(0 0 15px #ffe77a)}
+.potion-vial.correct::before{filter:hue-rotate(var(--vial-hue)) brightness(1.25)}
+.potion-vial.wrong{filter:drop-shadow(0 0 10px #ff416c)}
+.potion-vial.wrong::before{filter:hue-rotate(var(--vial-hue)) saturate(.6)}
+
+@media(max-width:900px){.word-star .star-word{inset:31% 18% 29%;font-size:21px}.panel.game-potion .panel-head small{left:14px;right:auto;top:155px}.brew-task .potion-word{width:min(330px,100%);min-height:124px;padding:24px 58px 21px;font-size:31px;letter-spacing:2px}.brew-task .potion-step{font-size:11px}}
