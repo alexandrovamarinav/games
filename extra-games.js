@@ -65,17 +65,12 @@ function renderStarship(){
   }
   if(index>=20)return complete();
   updateProgress();
-  const q=rounds.starship[index],allMagic=starshipPairs[q.vowel].map(pair=>pair[1]);
-  const distractors=allMagic.filter(word=>word!==q.magic).sort(()=>Math.random()-.5).slice(0,2);
-  const choices=[q.magic,...distractors].sort(()=>Math.random()-.5);
-  const tiles=[...q.base].map(letter=>`<span>${letter}</span>`).join('');
-  board.innerHTML=`<div class="starship-board"><div class="ship-hud"><span>MISSION <b>${q.vowel.toUpperCase()}</b></span><div><i style="width:${starshipFuel}%"></i></div><small>STAR FUEL ${starshipFuel}% · STREAK ${gameCombo}</small></div><div class="word-engine"><div class="engine-tiles">${tiles}<span class="engine-e">e</span></div><button class="listen-word" aria-label="Hear ${q.base}">🔊</button></div><p class="ship-prompt">Choose the word created when the starship adds final <b>e</b>.</p><div class="launch-choices">${choices.map(word=>`<button data-word="${word}">${word}</button>`).join('')}</div></div>`;
+  const q=rounds.starship[index];let transformed=false;
+  board.innerHTML=`<div class="starship-board"><div class="ship-hud"><span>MISSION <b>${q.vowel.toUpperCase()}</b></span><div><i style="width:${starshipFuel}%"></i></div><small>WORDS LAUNCHED ${index}/20</small></div><div class="word-engine"><div class="ship-word">${q.base}</div><button class="listen-word" aria-label="Hear ${q.base}">🔊</button></div><p class="ship-prompt"><b>CLOSED SYLLABLE</b> · read the word, then launch final e</p><div class="ship-actions"><button class="add-e-button"><span>ADD</span> e</button><button class="ship-next" hidden>NEXT ➜</button></div></div>`;
   board.querySelector('.listen-word').onclick=()=>speakStarshipWord(q.base);
-  board.querySelectorAll('.launch-choices button').forEach(button=>button.onclick=()=>{
-    if(locked)return;
-    if(button.dataset.word!==q.magic){gameCombo=0;playSound(false);button.classList.add('wrong');feedback.textContent=`Try again. Read “${q.base}”, then add silent e.`;feedback.className='feedback bad';board.querySelector('.ship-hud small').textContent=`STAR FUEL ${starshipFuel}% · STREAK 0`;setTimeout(()=>button.classList.remove('wrong'),480);return}
-    locked=true;gameCombo++;starshipFuel=Math.min(100,starshipFuel+5);playSound(true);reward();button.classList.add('correct');board.querySelector('.word-engine').classList.add('launched');board.querySelector('.ship-hud i').style.width=starshipFuel+'%';board.querySelector('.ship-hud small').textContent=`STAR FUEL ${starshipFuel}% · STREAK ${gameCombo}`;feedback.textContent=`Launch successful! “${q.base}” becomes “${q.magic}”.`;feedback.className='feedback good';speakStarshipPair(q.base,q.magic);setTimeout(()=>{index++;locked=false;feedback.textContent='';renderStarship()},1450)
-  });
+  const addButton=board.querySelector('.add-e-button'),nextButton=board.querySelector('.ship-next'),engine=board.querySelector('.word-engine'),word=board.querySelector('.ship-word'),prompt=board.querySelector('.ship-prompt');
+  addButton.onclick=()=>{if(transformed)return;transformed=true;gameCombo++;starshipFuel=Math.min(100,starshipFuel+5);playSound(true);reward();engine.classList.add('launched');addButton.disabled=true;setTimeout(()=>{word.textContent=q.magic;word.classList.add('long-word');prompt.innerHTML=`<b>MAGIC-E · LONG ${q.vowel.toUpperCase()}</b> · “${q.base}” becomes “${q.magic}”`;addButton.hidden=true;nextButton.hidden=false},430);board.querySelector('.ship-hud i').style.width=starshipFuel+'%';board.querySelector('.ship-hud small').textContent=`WORDS LAUNCHED ${index+1}/20`;feedback.textContent=`Magic! “${q.base}” becomes “${q.magic}”.`;feedback.className='feedback good';speakStarshipPair(q.base,q.magic)};
+  nextButton.onclick=()=>{index++;feedback.textContent='';feedback.className='feedback';renderStarship()};
 }
 
 function speakStarshipWord(word){if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(word);utterance.lang='en-US';utterance.rate=.72;window.speechSynthesis.speak(utterance)}
