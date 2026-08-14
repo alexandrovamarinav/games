@@ -49,29 +49,11 @@ function renderDragon(){
 }
 
 function renderStarship(){
-  if(!starshipVowel){
-    document.querySelector('#game-instruction').textContent='Choose the vowel you want to practise.';
-    document.querySelector('#progress-fill').style.width='0%';
-    document.querySelector('#question-number').textContent='1';
-    board.innerHTML=`<div class="starship-select"><span class="mission-kicker">SELECT YOUR READING MISSION</span><h3>Which vowel will power the starship?</h3><div class="mission-choices"><button data-vowel="a"><b>a</b><span>closed a → long a</span><small>cap → cape</small></button><button data-vowel="i"><b>i</b><span>closed i → long i</span><small>kit → kite</small></button></div></div>`;
-    board.querySelectorAll('[data-vowel]').forEach(button=>button.onclick=()=>{
-      starshipVowel=button.dataset.vowel;
-      rounds.starship.splice(0,rounds.starship.length,...starshipSets[starshipVowel]);
-      shuffleGameRounds('starship');
-      document.querySelector('#game-instruction').textContent=`Add final e to launch long ${starshipVowel} words.`;
-      renderStarship();
-    });
-    return;
-  }
   if(index>=20)return complete();
   updateProgress();
   const q=rounds.starship[index];let transformed=false;
-  board.innerHTML=`<div class="starship-board"><div class="ship-hud"><span>MISSION <b>${q.vowel.toUpperCase()}</b></span><div><i style="width:${starshipFuel}%"></i></div><small>WORDS LAUNCHED ${index}/20</small></div><div class="word-engine"><div class="ship-word">${q.base}</div><button class="listen-word" aria-label="Hear ${q.base}">🔊</button></div><p class="ship-prompt"><b>CLOSED SYLLABLE</b> · read the word, then launch final e</p><div class="ship-actions"><button class="add-e-button"><span>ADD</span> e</button><button class="ship-next" hidden>NEXT ➜</button></div></div>`;
-  board.querySelector('.listen-word').onclick=()=>speakStarshipWord(q.base);
+  board.innerHTML=`<div class="starship-board"><div class="ship-hud"><span>MISSION <b>${q.vowel.toUpperCase()}</b></span><div><i style="width:${starshipFuel}%"></i></div><small>WORDS LAUNCHED ${index}/20</small></div><div class="word-engine"><div class="ship-word">${q.base}</div></div><p class="ship-prompt"><b>CLOSED SYLLABLE</b> · read the word, then launch final e</p><div class="ship-actions"><button class="add-e-button"><span>ADD</span> e</button><button class="ship-next" hidden>NEXT ➜</button></div></div>`;
   const addButton=board.querySelector('.add-e-button'),nextButton=board.querySelector('.ship-next'),engine=board.querySelector('.word-engine'),word=board.querySelector('.ship-word'),prompt=board.querySelector('.ship-prompt');
-  addButton.onclick=()=>{if(transformed)return;transformed=true;gameCombo++;starshipFuel=Math.min(100,starshipFuel+5);playSound(true);reward();engine.classList.add('launched');addButton.disabled=true;setTimeout(()=>{word.textContent=q.magic;word.classList.add('long-word');prompt.innerHTML=`<b>MAGIC-E · LONG ${q.vowel.toUpperCase()}</b> · “${q.base}” becomes “${q.magic}”`;addButton.hidden=true;nextButton.hidden=false},430);board.querySelector('.ship-hud i').style.width=starshipFuel+'%';board.querySelector('.ship-hud small').textContent=`WORDS LAUNCHED ${index+1}/20`;feedback.textContent=`Magic! “${q.base}” becomes “${q.magic}”.`;feedback.className='feedback good';speakStarshipPair(q.base,q.magic)};
+  addButton.onclick=()=>{if(transformed)return;transformed=true;gameCombo++;starshipFuel=Math.min(100,starshipFuel+5);playSound(true);reward();engine.classList.add('launched');addButton.disabled=true;setTimeout(()=>{word.textContent=q.magic;word.classList.add('long-word');prompt.innerHTML=`<b>MAGIC-E · LONG ${q.vowel.toUpperCase()}</b> · “${q.base}” becomes “${q.magic}”`;addButton.hidden=true;nextButton.hidden=false},430);board.querySelector('.ship-hud i').style.width=starshipFuel+'%';board.querySelector('.ship-hud small').textContent=`WORDS LAUNCHED ${index+1}/20`;feedback.textContent=`Magic! “${q.base}” becomes “${q.magic}”.`;feedback.className='feedback good'};
   nextButton.onclick=()=>{index++;feedback.textContent='';feedback.className='feedback';renderStarship()};
 }
-
-function speakStarshipWord(word){if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(word);utterance.lang='en-US';utterance.rate=.72;window.speechSynthesis.speak(utterance)}
-function speakStarshipPair(first,second){if(!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const one=new SpeechSynthesisUtterance(first),two=new SpeechSynthesisUtterance(second);one.lang=two.lang='en-US';one.rate=two.rate=.7;one.onend=()=>setTimeout(()=>window.speechSynthesis.speak(two),130);window.speechSynthesis.speak(one)}
